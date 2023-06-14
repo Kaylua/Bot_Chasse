@@ -189,6 +189,11 @@ def move_down():
 
 #Lance une nouvelle chasse
 def new_hunt():
+    global canal_chat_set
+    if not canal_chat_set:
+        set_canal_guilde()
+        canal_chat_set = True
+
     time.sleep(0.3)
     recenter_mouse()
     time.sleep(0.3)
@@ -645,7 +650,6 @@ def move_to_destination(destination_x, destination_y):
             relancer_chasse()
     time.sleep(0.3)
 
-
 def move_to_phorreur2(direction):
     # Create a mapping of directions to coordinates changes
     directions_to_coordinates_changes = {
@@ -902,36 +906,6 @@ def spot_good_coffre():
     else:
         return False
 
-def combat2():
-    HP_count = 0
-    # Phase de début de combat
-    time.sleep(2)
-    pyautogui.click(1384, 968) #Click prêt
-    time.sleep(5)
-    while(check_image('combats/check_combat.png') and HP_count < 9): # while en combat...
-        if(check_image('combats/check_tour_personnage.png')): # si c'est le tour du joueur...
-            pyautogui.click(1188, 953) #Fleche harcelante
-            time.sleep(0.5)
-            attaque_good_coffre()
-            HP_count += 1
-            time.sleep(0.5)
-            pyautogui.click(1188, 953) #Fleche harcelante
-            time.sleep(0.5)
-            attaque_good_coffre()
-            HP_count += 1
-            time.sleep(0.5)
-            pyautogui.click(1188, 953) #Fleche harcelante
-            time.sleep(0.5)
-            attaque_good_coffre()
-            HP_count += 1
-            time.sleep(0.5)
-            pyautogui.press('f1') #Pass turn
-            time.sleep(1)
-    time.sleep(3)
-    pyautogui.press('enter')
-    time.sleep(0.5)
-    pyautogui.press('enter')
-
 def check_debut_combat():
     time.sleep(0.5)
     if check_zone_image(0.90, "combats/condition_fermer_cbt.png", 1303, 887, 1475, 1037):
@@ -1109,6 +1083,15 @@ def relancer_chasse():
         relancer_chasse()
     new_hunt()
 
+def set_canal_guilde():
+    time.sleep(0.5)
+    pyautogui.click(702,981)
+    time.sleep(0.5)
+    pyautogui.click(336,1028)
+    time.sleep(0.5)
+    pyautogui.click(395,1018)
+    time.sleep(0.5)
+
 # Pour faire marcher, mettre @exception_handler au dessus d'une fonction
 def exception_handler(func):
     def wrapper(*args, **kwargs):
@@ -1129,6 +1112,7 @@ indice_fill = False
 chasses_echouees = 0
 conditions_combat_valides = False
 phorreur_visited_maps = []  # Liste globale pour garder une trace des cartes visitées 
+canal_chat_set = False
 
 #Actions de l'utilisateur
 # keyboard.add_hotkey('q', move_left)
