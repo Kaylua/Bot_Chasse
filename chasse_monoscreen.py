@@ -8,6 +8,16 @@ import pyperclip
 import os 
 import string
 import sys
+import requests
+
+def send_log_message(message):
+    url = "http://localhost:5000/log"
+    data = {"log": message}
+    response = requests.post(url, data=data)
+    if response.status_code == 200:
+        print("Log message sent successfully.")
+    else:
+        print("Failed to send log message.")
 
 # Setup pytesseract
 os.environ['TESSDATA_PREFIX'] = r'C:\Users\ruben\AppData\Local\Programs\Tesseract-OCR\tessdata'
@@ -1103,6 +1113,11 @@ def exception_handler(func):
             return None
     return wrapper
 
+
+def print_test():
+    print("SALUT CA VA")
+    send_log_message("SALUT CA VA")
+
 #variables
 indice = 1
 # indice de départ (laisser à 1 si tu fais pas de tests)
@@ -1123,7 +1138,7 @@ keyboard.add_hotkey('p', new_hunt)
 keyboard.add_hotkey('f', letsgo)
 keyboard.add_hotkey('v', check_and_fill_coordinates)
 
-keyboard.add_hotkey('*', combat)
+keyboard.add_hotkey('*', print_test)
 
 #Attends une action clavier de l'utilisateur
 keyboard.wait()
