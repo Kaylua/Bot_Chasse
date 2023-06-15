@@ -5,7 +5,7 @@ import threading
 import asyncio
 
 # Configuration du bot Discord
-bot_token = 'MTA5Njc3ODY5MDY5MzcxNDAzMQ.GmhetJ.qfxX3fnhLNU_qkebEktIQhJoD1hPniymcBe5uI'  # Remplacez par le jeton de votre bot Discord
+bot_token = 'MTA5Njc3ODY5MDY5MzcxNDAzMQ.GwcULP.c-K8vpohiw4ZlTTdto1dMG1UpQ9K84rn6jQ-Qc'  # Remplacez par le jeton de votre bot Discord
 channel_id = 1118691939429126175  # Remplacez par l'ID du canal Discord dans lequel envoyer les messages
 
 # Création du client Discord

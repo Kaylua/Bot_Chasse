@@ -10,14 +10,15 @@ import string
 import sys
 import requests
 
-def send_log_message(message):
+def send_log_message(*args):
+    message = " ".join(str(arg) for arg in args)
     url = "http://localhost:5000/log"
     data = {"log": message}
     response = requests.post(url, data=data)
     if response.status_code == 200:
         print("Log message sent successfully.")
     else:
-        print("Failed to send log message.")
+        pass
 
 # Setup pytesseract
 os.environ['TESSDATA_PREFIX'] = r'C:\Users\ruben\AppData\Local\Programs\Tesseract-OCR\tessdata'
@@ -86,8 +87,10 @@ def get_coordinates():
         coordinates = re.findall(r'[-\d]+,[-\d]+', text)
         # Split the coordinates into two variables
         x, y = map(int, coordinates[0].split(','))
-        if check_zone_image(0.8, "autres_images/archimonstre.png", 324, 23, 1593, 927):
+        if check_zone_image(0.7, "autres_images/archimonstre.png", 324, 23, 1593, 927):
             print("******************* Archimonstre trouvé en [",x,",",y,"] *******************")
+            send_log_message("Archimonstre trouvé en [",x,",",y,"] ", mention())
+
         return x,y
     except Exception:
         time.sleep(0.2)
@@ -203,6 +206,7 @@ def new_hunt():
     if not canal_chat_set:
         set_canal_guilde()
         canal_chat_set = True
+        send_log_message("### Lancement du bot chasse. ###")
 
     time.sleep(0.3)
     recenter_mouse()
@@ -231,6 +235,7 @@ def new_hunt():
     global hunt_count
     hunt_count += 1
     print("Départ de la chasse N°",hunt_count)
+    send_log_message("Départ de la chasse N°",hunt_count)
     time.sleep(0.2)
     move_to_depart_chasse()
 
@@ -387,7 +392,8 @@ def get_fleche():
         text = get_direction(text)
         #print("fleche : ",text)
         if text is None or any(character.isdigit() for character in text): # Si ca retourne pas une bonne direction, ré essayer avec une autre prise de vue du screen (car certaines directions sont sur 2 lignes et d'autres 1)
-            pyautogui.click(38, 830)
+            recenter_mouse()
+            pyautogui.moveTo(38, 830)
             time.sleep(0.5)
             screenshot = pyautogui.screenshot()
             region = screenshot.crop((33, 768, 380, 804))
@@ -408,7 +414,8 @@ def get_fleche():
         text = get_direction(text)
         #print("fleche : ",text)
         if text is None or any(character.isdigit() for character in text): # Si ca retourne pas une bonne direction, ré essayer avec une autre prise de vue du screen (car certaines directions sont sur 2 lignes et d'autres 1)
-            pyautogui.click(38, 859)
+            recenter_mouse()
+            pyautogui.moveTo(38, 859)
             time.sleep(0.5)
             screenshot = pyautogui.screenshot()
             region = screenshot.crop((33, 797, 380, 833))
@@ -429,7 +436,8 @@ def get_fleche():
         text = get_direction(text)
         #print("fleche : ",text)
         if text is None or any(character.isdigit() for character in text): # Si ca retourne pas une bonne direction, ré essayer avec une autre prise de vue du screen (car certaines directions sont sur 2 lignes et d'autres 1)
-            pyautogui.click(38, 887)
+            recenter_mouse()
+            pyautogui.moveTo(38, 887)
             time.sleep(0.5)
             screenshot = pyautogui.screenshot()
             region = screenshot.crop((33, 826, 380, 862))
@@ -450,7 +458,8 @@ def get_fleche():
         text = get_direction(text)
         #print("fleche : ",text)
         if text is None or any(character.isdigit() for character in text): # Si ca retourne pas une bonne direction, ré essayer avec une autre prise de vue du screen (car certaines directions sont sur 2 lignes et d'autres 1)
-            pyautogui.click(38, 916)
+            recenter_mouse()
+            pyautogui.moveTo(38, 916)
             time.sleep(0.5)
             screenshot = pyautogui.screenshot()
             region = screenshot.crop((33, 855, 380, 891))
@@ -471,7 +480,8 @@ def get_fleche():
         text = get_direction(text)
         #print("fleche : ",text)
         if text is None or any(character.isdigit() for character in text): # Si ca retourne pas une bonne direction, ré essayer avec une autre prise de vue du screen (car certaines directions sont sur 2 lignes et d'autres 1)
-            pyautogui.click(38, 946)
+            recenter_mouse()
+            pyautogui.moveTo(38, 946)
             time.sleep(0.5)
             screenshot = pyautogui.screenshot()
             region = screenshot.crop((33, 884, 380, 920))
@@ -492,7 +502,8 @@ def get_fleche():
         text = get_direction(text)
         #print("fleche : ",text)
         if text is None or any(character.isdigit() for character in text): # Si ca retourne pas une bonne direction, ré essayer avec une autre prise de vue du screen (car certaines directions sont sur 2 lignes et d'autres 1)
-            pyautogui.click(38, 973)
+            recenter_mouse()
+            pyautogui.moveTo(38, 973)
             time.sleep(0.5)
             screenshot = pyautogui.screenshot()
             region = screenshot.crop((33, 913, 380, 949))
@@ -954,6 +965,7 @@ def combat():
     pyautogui.press('enter')
     time.sleep(0.8)
     pyautogui.press('enter')
+    print("Combat terminé, fin de la chasse N°",hunt_count)
 
 def go_zaap(zaap_name):
     pyautogui.click(553, 416)
@@ -1081,6 +1093,7 @@ def relancer_chasse():
     global chasses_echouees
     chasses_echouees += 1
     print("Chasse échouée N°", chasses_echouees)
+    send_log_message("Chasse échouée N°", chasses_echouees)
     check_and_click_zone_image(0.8, "autres_images/end_hunt.png", 0, 660, 340, 1030)
     time.sleep(0.5)
     pyautogui.press('enter')
@@ -1091,6 +1104,12 @@ def relancer_chasse():
     if "Impossible" in text or "finissez" in text:
         time.sleep(120)
         relancer_chasse()
+    if "honnête" in text or "aujourd'hui" in text:
+        pyautogui.press('r')
+        time.sleep(2.5)
+        pyautogui.press('h')
+        send_log_message("LIMITE DE CHASSE JOURNALIERE ", mention())
+        input("LIMITE DE CHASSE JOURNALIERE")
     new_hunt()
 
 def set_canal_guilde():
@@ -1115,8 +1134,12 @@ def exception_handler(func):
 
 
 def print_test():
-    print("SALUT CA VA")
-    send_log_message("SALUT CA VA")
+    send_log_message("Bot lancé ",mention())
+
+def mention():
+    userid = "254661709006897162" #Kaylua
+    mention = f"<@{userid}>"
+    return mention
 
 #variables
 indice = 1
@@ -1138,7 +1161,8 @@ keyboard.add_hotkey('p', new_hunt)
 keyboard.add_hotkey('f', letsgo)
 keyboard.add_hotkey('v', check_and_fill_coordinates)
 
-keyboard.add_hotkey('*', print_test)
+keyboard.add_hotkey('*', move_to_depart_chasse)
+keyboard.add_hotkey('l', print_test)
 
 #Attends une action clavier de l'utilisateur
 keyboard.wait()
