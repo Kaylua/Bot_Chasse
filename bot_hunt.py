@@ -595,7 +595,6 @@ def verif_indice_dofusdb():
     screenshot = pyautogui.screenshot()
     # Crop the image to the area of interest
     region = screenshot.crop((2245, 991, 2553, 1018))
-    region.save("DOSKDOPQSD.png")
     # Use pytesseract to extract text
     text = pytesseract.image_to_string(region)
     # Check if the words "copiée" and "dans" are in the text
